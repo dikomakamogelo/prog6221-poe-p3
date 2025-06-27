@@ -14,7 +14,24 @@ namespace CybersecurityChatbot.Forms
         private void btnSend_Click(object sender, EventArgs e)
         {
             string input = txtInput.Text.Trim();
-            string response = NLPProcessor.GetBotResponse(input);
+            string response;
+
+            if (QuizManager.IsQuizActive())
+            {
+                response = QuizManager.ProcessAnswer(input);
+            }
+            else
+            {
+                if (input.ToLower().Contains("quiz"))
+                {
+                    response = QuizManager.StartQuiz();
+                }
+                else
+                {
+                    response = NLPProcessor.GetBotResponse(input);
+                }
+            }
+
             rtbConversation.AppendText($"You: {input}\nBot: {response}\n\n");
             ActivityLogger.Log(input, response);
             txtInput.Clear();
